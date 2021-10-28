@@ -1,7 +1,7 @@
 use serde::{ Serialize, Deserialize };
 use std::str::{ FromStr };
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub enum Position 
 {
     Attacker,
@@ -9,6 +9,14 @@ pub enum Position
     Defender,
     Goalkeeper,
     NotOnTheField
+}
+
+impl Default for Position
+{
+    fn default() -> Self
+    {
+        Position::NotOnTheField
+    }
 }
 
 impl FromStr for Position 
@@ -27,7 +35,7 @@ impl FromStr for Position
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Default, Debug, Serialize, Deserialize)]
 pub struct Player
 {
     pub name: String,
@@ -41,7 +49,7 @@ pub struct Player
 pub enum Surface
 {
     Unknown,
-    NaturalGras,
+    Grass,
     ArtificialGrass,
     Hybrid
 }
@@ -53,7 +61,7 @@ impl FromStr for Surface
     fn from_str(string: &str) -> Result<Self, Self::Err>
     {
         match string.to_lowercase().as_ref() {
-            "natuurgras" => { Ok(Surface::NaturalGras) },
+            "grass" => { Ok(Surface::Grass) },
             "kunstgras" => { Ok(Surface::ArtificialGrass) },
             "hybride" => { Ok(Surface::Hybrid) },
             _ => { Ok(Surface::Unknown) }
@@ -61,7 +69,11 @@ impl FromStr for Surface
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+impl Default for Surface {
+    fn default() -> Self { Surface::Unknown }
+}
+
+#[derive(Default, Debug, Serialize, Deserialize)]
 pub struct Team
 {
     pub id: u32,
@@ -72,7 +84,15 @@ pub struct Team
     pub since: u32
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Default, Debug, Serialize, Deserialize)]
+pub struct TeamWithPlayers
+{
+    pub team: Team,
+    pub players: Vec<Player>
+}
+
+
+#[derive(Default, Debug, Serialize, Deserialize)]
 pub struct Goal
 {
     pub time: u32,
@@ -80,7 +100,7 @@ pub struct Goal
     pub for_team: Team,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Default, Debug, Serialize, Deserialize)]
 pub struct Match 
 {
     pub team_home: Team,

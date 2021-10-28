@@ -4,7 +4,7 @@
         "name": "SC Heerenveen",
         "city": "Heerenveen",
         "stadium": "Abe Lenstra Stadion",
-        "surface": "natuurgras",
+        "surface": "Grass",
         "since": 1993
     },
     {
@@ -12,7 +12,7 @@
         "name": "Ajax",
         "city": "Amsterdam",
         "stadium": "Johan Cruijff ArenA",
-        "surface": "hybride",
+        "surface": "Hybrid",
         "since": 1956
     },
     {
@@ -20,7 +20,7 @@
         "name": "AZ",
         "city": "Alkmaar",
         "stadium": "AFAS Stadion",
-        "surface": "hybride",
+        "surface": "Hybrid",
         "since": 1998
     },
     {
@@ -28,7 +28,7 @@
         "name": "SC Cambuur",
         "city": "Leeuwarden",
         "stadium": "Cambuurstadion",
-        "surface": "kunstgras",
+        "surface": "ArtificialGrass",
         "since": 2021
     },
     {
@@ -36,7 +36,7 @@
         "name": "Feyenoord",
         "city": "Rotterdam",
         "stadium": "De Kuip",
-        "surface": "hybride",
+        "surface": "Hybrid",
         "since": 1956
     },
     {
@@ -44,7 +44,7 @@
         "name": "Fortuna Sittard",
         "city": "Sittard",
         "stadium": "Fortuna Sittard Stadion",
-        "surface": "natuurgras",
+        "surface": "Grass",
         "since": 2018
     },
     {
@@ -52,7 +52,7 @@
         "name": "Go Ahead Eagles",
         "city": "Deventer",
         "stadium": "De Adelaarshorst",
-        "surface": "natuurgras",
+        "surface": "Grass",
         "since": 2021
     },
     {
@@ -60,7 +60,7 @@
         "name": "FC Groningen",
         "city": "Groningen",
         "stadium": "Euroborg",
-        "surface": "hybride",
+        "surface": "Hybrid",
         "since": 2000
     },
     {
@@ -68,7 +68,7 @@
         "name": "Heracles Almelo",
         "city": "Almelo",
         "stadium": "Erve Asito",
-        "surface": "kunstgras",
+        "surface": "ArtificialGrass",
         "since": 2005
     },
     {
@@ -76,7 +76,7 @@
         "name": "N.E.C.",
         "city": "Nijmegen",
         "stadium": "Goffertstadion",
-        "surface": "natuurgras",
+        "surface": "Grass",
         "since": 2021
     },
     {
@@ -84,7 +84,7 @@
         "name": "PSV",
         "city": "Eindhoven",
         "stadium": "Phillips Stadion",
-        "surface": "natuurgras",
+        "surface": "Grass",
         "since": 1956
     },
     {
@@ -92,7 +92,7 @@
         "name": "PEC Zwolle",
         "city": "Zwolle",
         "stadium": "MAC³PARK Stadion",
-        "surface": "natuurgras",
+        "surface": "Grass",
         "since": 2012
     },
     {
@@ -100,7 +100,7 @@
         "name": "RKC Waalwijk",
         "city": "Waalwijk",
         "stadium": "Mandemakers Stadion",
-        "surface": "natuurgras",
+        "surface": "Grass",
         "since": 2019
     },
     {
@@ -108,7 +108,7 @@
         "name": "Sparta Rotterdam",
         "city": "Rotterdam",
         "stadium": "Het Kasteel",
-        "surface": "natuurgras",
+        "surface": "Grass",
         "since": 2019
     },
     {
@@ -116,7 +116,7 @@
         "name": "FC Twente",
         "city": "Enschede",
         "stadium": "De Grolsch Veste",
-        "surface": "natuurgras",
+        "surface": "Grass",
         "since": 2019
     },
     {
@@ -124,7 +124,7 @@
         "name": "FC Utrecht",
         "city": "Utrecht",
         "stadium": "Stadion Galgenwaard",
-        "surface": "natuurgras",
+        "surface": "Grass",
         "since": 1970
     },
     {
@@ -132,7 +132,7 @@
         "name": "Vitesse",
         "city": "Arnhem",
         "stadium": "Gelredome",
-        "surface": "hybride",
+        "surface": "Hybrid",
         "since": 1989
     },
     {
@@ -140,7 +140,7 @@
         "name": "Willem II",
         "city": "Tilburg",
         "stadium": "Koning Willem II Stadion",
-        "surface": "natuurgras",
+        "surface": "Grass",
         "since": 2014
     }
 ]
