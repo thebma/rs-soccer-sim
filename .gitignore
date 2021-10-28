@@ -1,3 +1,4 @@
 /target
 /.vs
 src/secret.rs
+/data

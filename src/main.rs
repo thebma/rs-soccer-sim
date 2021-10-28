@@ -52,6 +52,27 @@ fn load_teams() -> Vec<Team>
     }
 }
 
+fn load_standings() -> Vec<u32>
+{
+    const STANDING_PATH: &str = "./data/standings.json";
+
+    if Path::new(STANDING_PATH).exists()
+    {
+        let mut standings_file = File::open(STANDING_PATH)
+            .expect("Where is my standings.json?");
+    
+        let mut json = String::new();
+        standings_file.read_to_string(&mut json).unwrap();
+    
+        let standings: Vec<u32> = serde_json::from_str(&json).unwrap();
+        return standings;
+    }
+    else
+    {
+        panic!("No teams.json was found!");
+    }
+}
+
 fn make_teams(in_players: Vec<Player>, in_teams: Vec<Team>) -> Vec<TeamWithPlayers>
 {
     let mut teams = Vec::new();
@@ -154,7 +175,6 @@ fn save_team_players(team_players: Vec<TeamWithPlayers>)
     }
 
     let json: String = serde_json::to_string_pretty(&team_players).unwrap();
-    println!("{}", json);
     std::fs::write(TEAM_PLAYER_PATH, json).unwrap();
 }
 
@@ -165,4 +185,7 @@ fn main()
 
     let team_players: Vec<TeamWithPlayers> = make_teams(players, teams);
     save_team_players(team_players);
+
+    let standings: Vec<u32> = load_standings();
+    println!("{:?}", standings);
 }
