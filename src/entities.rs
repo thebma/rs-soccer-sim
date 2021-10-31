@@ -152,23 +152,39 @@ impl Match
         self.goals.push(goal);
     }
 
-    pub fn get_team(teams: Vec<TeamWithPlayers>, id: u32) -> Option<Team>
+    pub fn get_team(&self, teams: Vec<TeamWithPlayers>, id: u32) -> Option<TeamWithPlayers>
     {
         for team in teams 
         {
             if team.team.id == id
             {
-                return Some(team.team);
+                return Some(team);
             }
         }
 
-        return None();
+        None
     }
 
     pub fn get_players(&self, teams: Vec<TeamWithPlayers>) -> (Vec<Player>, Vec<Player>)
     {   
         let team_home_players: Vec<Player> = Vec::new();
         let team_out_players: Vec<Player> = Vec::new();
+
+        if let Some(home_team) = self.get_team(teams, self.team_home)
+        {
+            for player in home_team.players 
+            {
+                team_home_players.push(player);
+            }
+        }
+
+        if let Some(out_team) = self.get_team(teams, self.team_out)
+        {
+            for player in out_team.players 
+            {
+                team_out_players.push(player);
+            }
+        }
 
         for team in teams 
         {
