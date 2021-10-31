@@ -1,7 +1,9 @@
 use serde::{ Serialize, Deserialize };
 use std::str::{ FromStr };
+use rand::Rng;
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+
+#[derive(Eq, PartialEq, Clone, Debug, Serialize, Deserialize)]
 pub enum Position 
 {
     Attacker,
@@ -38,6 +40,7 @@ impl FromStr for Position
 #[derive(Clone, Default, Debug, Serialize, Deserialize)]
 pub struct Player
 {
+    pub id: u32,
     pub name: String,
     pub dob: String,
     pub height: String,
@@ -45,7 +48,7 @@ pub struct Player
     pub quality: u8
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub enum Surface
 {
     Unknown,
@@ -73,7 +76,7 @@ impl Default for Surface {
     fn default() -> Self { Surface::Unknown }
 }
 
-#[derive(Default, Debug, Serialize, Deserialize)]
+#[derive(Clone, Default, Debug, Serialize, Deserialize)]
 pub struct Team
 {
     pub id: u32,
@@ -84,26 +87,107 @@ pub struct Team
     pub since: u32
 }
 
-#[derive(Default, Debug, Serialize, Deserialize)]
+#[derive(Clone, Default, Debug, Serialize, Deserialize)]
 pub struct TeamWithPlayers
 {
     pub team: Team,
     pub players: Vec<Player>
 }
 
+impl TeamWithPlayers 
+{
+    pub fn get_random_player(&self, position: Position) -> Player
+    {
+        let mut player: Player = Player{ ..Default::default() };
+        let mut index = 0;
 
-#[derive(Default, Debug, Serialize, Deserialize)]
+        let mut rng = rand::thread_rng();
+
+        loop
+        {
+            let current_player = self.players.get(index);
+
+            if let Some(current_found_player) = current_player
+            {
+                if current_found_player.position == position 
+                {
+                    let random = rng.gen_range(0..100);
+
+                    if random > 90 
+                    {
+                        player = current_found_player.clone();
+                        break;
+                    }
+                }
+            }
+
+            index = (index + 1) % self.players.len();
+        }
+
+        return player;
+    }
+}
+
+
+#[derive(Clone, Default, Debug, Serialize, Deserialize)]
 pub struct Goal
 {
     pub time: u32,
-    pub scorer: Player,
-    pub for_team: Team,
+    pub team_id: u32,
+    pub player_id: u32
 }
 
-#[derive(Default, Debug, Serialize, Deserialize)]
+#[derive(Clone, Default, Debug, Serialize, Deserialize)]
 pub struct Match 
 {
-    pub team_home: Team,
-    pub team_out: Team,
+    pub team_home: u32,
+    pub team_out: u32,
     pub goals: Vec<Goal>,
+}
+
+impl Match 
+{
+    pub fn add_goal(&mut self, goal: Goal)
+    {
+        self.goals.push(goal);
+    }
+
+    pub fn get_team(teams: Vec<TeamWithPlayers>, id: u32) -> Option<Team>
+    {
+        for team in teams 
+        {
+            if team.team.id == id
+            {
+                return Some(team.team);
+            }
+        }
+
+        return None();
+    }
+
+    pub fn get_players(&self, teams: Vec<TeamWithPlayers>) -> (Vec<Player>, Vec<Player>)
+    {   
+        let team_home_players: Vec<Player> = Vec::new();
+        let team_out_players: Vec<Player> = Vec::new();
+
+        for team in teams 
+        {
+            if team.team.id == self.team_home
+            {
+                for player in team.players 
+                {
+                    team_home_players.push(player);
+                }
+            }
+            else if team.team.id == self.team_out
+            {
+                for player in team.players 
+                {
+                    team_out_players.push(player);
+                }
+            }
+        }
+
+        return (team_home_players, team_out_players)
+    }
 }

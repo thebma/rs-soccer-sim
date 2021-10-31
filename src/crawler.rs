@@ -28,6 +28,7 @@ pub fn crawl() -> Vec<Player>
 fn crawl_page(i: u32) -> Vec<Player>
 {
     let mut players: Vec<Player> = Vec::new();
+    let mut player_id: u32 = 0;
 
     let url: String = secret::get_vicitim().to_owned();
     let page_url = url + "/" + i.to_string().as_ref();
@@ -71,6 +72,7 @@ fn crawl_page(i: u32) -> Vec<Player>
             if values.len() >= 5 
             {
                 let player: Player = Player {
+                    id: player_id,
                     name: values.get(0).unwrap().to_owned(),
                     dob: values.get(2).unwrap().to_owned(),
                     height: values.get(3).unwrap().to_owned(),
@@ -78,6 +80,7 @@ fn crawl_page(i: u32) -> Vec<Player>
                     quality: rng.gen_range(0..100) as u8
                 };
 
+                player_id += 1;
                 players.push(player);
             }
             

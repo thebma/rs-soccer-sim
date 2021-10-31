@@ -1,11 +1,12 @@
 mod secret;
 mod entities;
 mod crawler;
+mod simulation;
 
 use std::path::{Path};
 use std::fs::File;
 use std::io::Read;
-use entities::{Position, Player, Team, TeamWithPlayers};
+use entities::{Match, Goal, Position, Player, Team, TeamWithPlayers};
 use rand::Rng;
 
 fn load_players() -> Vec<Player>
@@ -165,7 +166,7 @@ fn make_teams(in_players: Vec<Player>, in_teams: Vec<Team>) -> Vec<TeamWithPlaye
     return teams_with_players;
 }
 
-fn save_team_players(team_players: Vec<TeamWithPlayers>)
+fn save_team_players(team_players: &Vec<TeamWithPlayers>)
 {
     const TEAM_PLAYER_PATH: &str = "./data/team_with_players.json";
 
@@ -178,14 +179,30 @@ fn save_team_players(team_players: Vec<TeamWithPlayers>)
     std::fs::write(TEAM_PLAYER_PATH, json).unwrap();
 }
 
+fn save_matches(matches: Vec<Match>)
+{
+    const MATCHES_PATH: &str = "./data/matches.json";
+
+    if Path::new(MATCHES_PATH).exists()
+    {
+        std::fs::remove_file(MATCHES_PATH).unwrap();
+    }
+
+    let json: String = serde_json::to_string_pretty(&matches).unwrap();
+    std::fs::write(MATCHES_PATH, json).unwrap();
+}
+
 fn main() 
 {
     let players: Vec<Player> = load_players();
     let teams: Vec<Team> = load_teams();
 
     let team_players: Vec<TeamWithPlayers> = make_teams(players, teams);
-    save_team_players(team_players);
+    save_team_players(&team_players);
 
     let standings: Vec<u32> = load_standings();
     println!("{:?}", standings);
+
+    let results: Vec<Match> = simulation::simulate(&team_players, standings);
+    save_matches(results);
 }
