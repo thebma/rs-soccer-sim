@@ -77,7 +77,7 @@ fn crawl_page(i: u32) -> Vec<Player>
                     dob: values.get(2).unwrap().to_owned(),
                     height: values.get(3).unwrap().to_owned(),
                     position: Position::from_str(values.get(4).unwrap()).unwrap(),
-                    quality: rng.gen_range(0..100) as u8
+                    quality: 50 + rng.gen_range(0..50) as u8
                 };
 
                 player_id += 1;

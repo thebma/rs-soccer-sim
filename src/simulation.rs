@@ -37,6 +37,7 @@ pub fn simulate(teams: &Vec<TeamWithPlayers>, standings: Vec<u32>) -> Vec<Match>
     let matches_to_play: Vec<Match> = make_matches(&teams);
     let mut matches_resolved: Vec<Match> = Vec::new();
 
+
     println!("We have {} matches to play.", matches_to_play.len());
 
     for game in matches_to_play
@@ -45,6 +46,8 @@ pub fn simulate(teams: &Vec<TeamWithPlayers>, standings: Vec<u32>) -> Vec<Match>
         let resolved_match = simulate_match(teams, game_ref, &standings);
         matches_resolved.push(resolved_match);
     }
+
+    println!("{:?}", matches_resolved.len());
 
     return matches_resolved;
 }
@@ -92,12 +95,12 @@ fn simulate_match(teams: &Vec<TeamWithPlayers>, game_match: &mut Match, standing
 
     const MINUTES: u32 = 90;
     const STANDING_FACTOR_MIN: f32 = 1.2;
-    const STANDING_FACTOR_MAX: f32 = 1.6;
+    const STANDING_FACTOR_MAX: f32 = 1.4;
     const HOME_FACTOR_MIN: f32 = 1.05;
-    const HOME_FACTOR_MAX: f32 = 1.25;
+    const HOME_FACTOR_MAX: f32 = 1.15;
     const HOME_PITCH: i32 = 45;
     const OUT_PITCH: i32 = 55;
-    const GOAL_REBOUND: i32 = 25;
+    const GOAL_REBOUND: i32 = 33;
 
     //49 because home gets to kick the ball off the center always.
     let mut field: i32 = HOME_PITCH;
@@ -112,21 +115,21 @@ fn simulate_match(teams: &Vec<TeamWithPlayers>, game_match: &mut Match, standing
         let home_team_standing = (*standings.get(game_match.team_home as usize - 1).unwrap() as f32 * standing_advantage).floor() as u32;
         let out_team_standing = (*standings.get(game_match.team_out as usize - 1).unwrap() as f32 * standing_advantage).floor() as u32;
 
-        let (home_players, out_players) = &game_match.get_players(*teams);
+        let (home_players, out_players) = &game_match.get_players(teams);
 
         let (home_atk, home_mid, home_def, home_goal) = caculate(home_players, HOME_FACTOR_MIN, HOME_FACTOR_MAX);
         let (out_atk, out_mid, out_def, out_goal) = caculate(out_players, HOME_FACTOR_MIN, HOME_FACTOR_MAX);
 
-        //println!("{} {} {} {} vs {} {} {} {}", home_atk, home_def, home_mid, home_goal, out_atk, out_def, out_mid, out_goal);
+       // println!("{} | {} {} {} {} vs {} {} {} {}", field, home_atk, home_def, home_mid, home_goal, out_atk, out_def, out_mid, out_goal);
         
         let home_variance_upper = home_team_standing as f32 / 1000.0;
         let out_variance_upper = out_team_standing as f32 / 1000.0;
 
-        let home_variance = rng.gen_range(0.92..1.0 + home_variance_upper) as f32;
-        let out_variance = rng.gen_range(0.92..1.0 + out_variance_upper) as f32;
+        let home_variance = rng.gen_range(0.98..1.0 + home_variance_upper) as f32;
+        let out_variance = rng.gen_range(0.98..1.0 + out_variance_upper) as f32;
 
         //Handle logic if home team is attacking.
-        if field > 75 && field < 100
+        if field >= 75 && field < 100
         {
             let mut home_attack_score = (home_atk as f32+ home_mid as f32 * 0.33).round() as i32;
             home_attack_score = (home_attack_score as f32 * home_variance).round() as i32;
@@ -136,29 +139,33 @@ fn simulate_match(teams: &Vec<TeamWithPlayers>, game_match: &mut Match, standing
 
             let delta = (home_attack_score as i32 - out_defending_score as i32).abs();
 
-            if out_defending_score > home_attack_score {
+            if out_defending_score > home_attack_score 
+            {
                 field -= delta
             }
-            else {
+            else 
+            {
                 field += delta;
             }
         }
         //Handle logic when both team are in the mid field.
-        else if field < 75 && field > 25
+        else if field < 75 && field >= 25
         {
             let home_mid_score = (home_mid as f32 * home_variance).round() as i32;
             let out_mid_score = (out_mid as f32 * out_variance).round() as i32;
             let delta = (home_mid_score as i32 - out_mid_score as i32).abs();
 
-            if out_mid_score > home_mid_score {
+            if out_mid_score > home_mid_score 
+            {
                 field -= delta;
             }
-            else {
+            else 
+            {
                 field += delta;
             }
         }
         //Handle logic when out is attacking
-        else if field > 0 && field < 25
+        else if field > 0 && field <= 25
         {
             let mut out_attack_score = (out_atk as f32+ out_mid as f32 * 0.33).round() as i32;
             out_attack_score = (out_attack_score as f32 * out_variance).round() as i32;
@@ -166,31 +173,34 @@ fn simulate_match(teams: &Vec<TeamWithPlayers>, game_match: &mut Match, standing
             let mut home_defending_score = (home_def as f32 + home_mid as f32 * 0.33).round() as i32;
             home_defending_score = (home_defending_score as f32 * home_variance).round() as i32;
 
-            let delta = (home_defending_score as i32 - out_attack_score as i32).abs();
+            let delta = (home_defending_score as i32 - out_attack_score as i32).abs() / 10;
 
-            if home_defending_score > out_attack_score {
+            if home_defending_score > out_attack_score 
+            {
                 field += delta
             }
-            else {
+            else 
+            {
                 field -= delta;
             }
         }
-        else if field > 100 || field < 0
+        else if field >= 100 || field <= 0
         {
             let goal_pick = rng.gen_range(0..100) as u32;
-            let goal_variance = rng.gen_range(0.9..1.1) as f32;
+            let goal_variance = rng.gen_range(0.9..1.11) as f32;
             
-            let home_goal_score = (home_goal as f32 * goal_variance).round() as u32;
-            let out_goal_score = (out_goal as f32 * goal_variance).round() as u32;
-
+            let home_goal_score = (home_goal as f32 * goal_variance).round() as u32 + (goals_home * 12);
+            let out_goal_score = (out_goal as f32 * goal_variance).round() as u32 + (goals_out * 12);
 
             if field > 100 
             {
+                //println!("HOME {} | {} > {}", field, goal_pick, home_goal_score);
                 if goal_pick > home_goal_score
                 {
-                    let team_copy: Team = game_match.team_home.team.clone();
-                    let scorerer: Player = game_match.team_home.get_random_player(Position::Attacker);
-                    let home_goal = Goal { time: minute, team_id: team_copy.id, player_id: scorerer.id };
+                   // println!("HOME GOAL {} {}", goals_out, goals_out * 5);
+                    let team_copy: TeamWithPlayers = game_match.get_team(teams, game_match.team_home).unwrap();
+                    let scorerer: Player = team_copy.get_random_player(Position::Attacker);
+                    let home_goal = Goal { time: minute, team_id: team_copy.team.id, player_id: scorerer.id };
                     game_match.add_goal(home_goal);
 
                     goals_home += 1;
@@ -198,31 +208,35 @@ fn simulate_match(teams: &Vec<TeamWithPlayers>, game_match: &mut Match, standing
                 }
                 else
                 {
-                    field -= GOAL_REBOUND;
+                    field = 100 - GOAL_REBOUND;
                 }
             }
             else
             {
+                //println!("OUT {} | {} > {}", field, goal_pick, out_goal_score);
+
                 if goal_pick > out_goal_score 
                 {
-                    let team_copy: Team = game_match.team_out.clone()
-                    let scorerer: Player = game_match.team_out.get_random_player(Position::Attacker);
-                    let out_goal = Goal { time: minute, team_id: team_copy.id, player_id: scorerer.id };
+                    //println!("OUT GOAL {} {}", goals_home, goals_home * 5);
+                    let team_copy: TeamWithPlayers = game_match.get_team(teams, game_match.team_out).unwrap();
+                    let scorerer: Player = team_copy.get_random_player(Position::Attacker);
+                    let out_goal = Goal { time: minute, team_id: team_copy.team.id, player_id: scorerer.id };
                     game_match.add_goal(out_goal);
+
                     goals_out += 1;
                     field = HOME_PITCH;
                 }
                 else
                 {
-                    field += GOAL_REBOUND;
+                    field = 0 + GOAL_REBOUND;
                 }
             }
         }
     }
 
     println!("{} vs. {} {} - {} ", 
-        game_match.team_home.team_home,  
-        game_match.team_out.team_out, 
+        game_match.get_team(teams, game_match.team_home).unwrap().team.name,
+        game_match.get_team(teams, game_match.team_out).unwrap().team.name,
         goals_home, goals_out
     );
 
