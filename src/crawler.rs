@@ -9,13 +9,17 @@ use crate::secret;
 pub fn crawl() -> Vec<Player>
 {   
     const MAX_PAGES: u32 = 11;
+    const PER_PAGE: u32 = 50;
 
     let mut all_players: Vec<Player> = Vec::new();
 
-    for page in 1..MAX_PAGES+1 {
-        let players = crawl_page(page);
+    for page in 1..MAX_PAGES+1 
+    {
+        let offset: u32 = (page - 1) * PER_PAGE;
+        let players = crawl_page(offset, page);
 
-        for player in players {
+        for player in players 
+        {
             all_players.push(player);
         }
     }
@@ -25,10 +29,10 @@ pub fn crawl() -> Vec<Player>
     return all_players;
 }
 
-fn crawl_page(i: u32) -> Vec<Player>
+fn crawl_page(id_offset: u32, i: u32) -> Vec<Player>
 {
     let mut players: Vec<Player> = Vec::new();
-    let mut player_id: u32 = 0;
+    let mut player_id: u32 = id_offset;
 
     let url: String = secret::get_vicitim().to_owned();
     let page_url = url + "/" + i.to_string().as_ref();
