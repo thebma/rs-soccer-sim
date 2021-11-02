@@ -1,4 +1,5 @@
 /target
 /.vs
+/.idea
 src/secret.rs
 /data
